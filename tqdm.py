@@ -47,7 +47,8 @@ class StatusPrinter(object):
         self.last_printed_len = 0
     
     def print_status(self, s):
-        self.file.write('\r'+s+' '*max(self.last_printed_len-len(s), 0))
+        b = '\b' * self.last_printed_len
+        self.file.write(b + s + ' ' * max(self.last_printed_len - len(s), 0))
         self.file.flush()
         self.last_printed_len = len(s)
 
