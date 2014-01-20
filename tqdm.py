@@ -52,7 +52,7 @@ class StatusPrinter(object):
         self.last_printed_len = len(s)
 
 
-def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
+def tqdm(iterable, desc='', total=None, leave=False, file=sys.stdout,
          mininterval=0.5, miniters=1):
     """
     Get an iterable object, and return an iterator which acts exactly like the
