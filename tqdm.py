@@ -17,7 +17,7 @@ def format_meter(n, total, elapsed):
     # n - number of finished iterations
     # total - total number of iterations, or None
     # elapsed - number of seconds passed since start
-    if n > total:
+    if total and n > total:
         total = None
     
     elapsed_str = format_interval(elapsed)
