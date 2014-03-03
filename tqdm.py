@@ -13,39 +13,42 @@ def format_interval(t):
         return '%02d:%02d' % (m, s)
 
 
-def format_meter(n, total, elapsed):
+def format_meter(n, total, elapsed, format_dict):
     # n - number of finished iterations
     # total - total number of iterations, or None
     # elapsed - number of seconds passed since start
     if n > total:
         total = None
-    
+
     elapsed_str = format_interval(elapsed)
     rate = '%5.2f' % (n / elapsed) if elapsed else '?'
-    
+
     if total:
         frac = float(n) / total
-        
-        N_BARS = 10
+
+        N_BARS = format_dict["len"]
         bar_length = int(frac*N_BARS)
-        bar = '#'*bar_length + '-'*(N_BARS-bar_length)
-        
+        bar = ''.join([
+            format_dict["filled"]*bar_length,
+            format_dict["empty"]*(N_BARS-bar_length)
+        ])
+
         percentage = '%3d%%' % (frac * 100)
-        
+
         left_str = format_interval(elapsed / n * (total-n)) if n else '?'
-        
-        return '|%s| %d/%d %s [elapsed: %s left: %s, %s iters/sec]' % (
+
+        return format_dict['str_long'] % (
             bar, n, total, percentage, elapsed_str, left_str, rate)
-    
+
     else:
-        return '%d [elapsed: %s, %s iters/sec]' % (n, elapsed_str, rate)
+        return format_dict['str_short'] % (n, elapsed_str, rate)
 
 
 class StatusPrinter(object):
     def __init__(self, file):
         self.file = file
         self.last_printed_len = 0
-    
+
     def print_status(self, s):
         self.file.write('\r'+s+' '*max(self.last_printed_len-len(s), 0))
         self.file.flush()
@@ -53,7 +56,7 @@ class StatusPrinter(object):
 
 
 def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
-         mininterval=0.5, miniters=1):
+         mininterval=0.5, miniters=1, format_dict={}):
     """
     Get an iterable object, and return an iterator which acts exactly like the
     iterable, but prints a progress meter and updates it every time a value is
@@ -73,11 +76,17 @@ def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
             total = len(iterable)
         except TypeError:
             total = None
-    
+
+    format_dict.setdefault("len", 10)
+    format_dict.setdefault("filled", '#')
+    format_dict.setdefault("empty", '-')
+    format_dict.setdefault("str_short", '%d [elapsed: %s, %s iters/sec]')
+    format_dict.setdefault("str_long", '|%s| %d/%d %s [elapsed: %s left: %s, %s iters/sec]')
+
     prefix = desc+': ' if desc else ''
     
     sp = StatusPrinter(file)
-    sp.print_status(prefix + format_meter(0, total, 0))
+    sp.print_status(prefix + format_meter(0, total, 0, format_dict))
     
     start_t = last_print_t = time.time()
     last_print_n = 0
@@ -90,7 +99,7 @@ def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
             # We check the counter first, to reduce the overhead of time.time()
             cur_t = time.time()
             if cur_t - last_print_t >= mininterval:
-                sp.print_status(prefix + format_meter(n, total, cur_t-start_t))
+                sp.print_status(prefix + format_meter(n, total, cur_t-start_t, format_dict))
                 last_print_n = n
                 last_print_t = cur_t
     
@@ -100,7 +109,7 @@ def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
     else:
         if last_print_n < n:
             cur_t = time.time()
-            sp.print_status(prefix + format_meter(n, total, cur_t-start_t))
+            sp.print_status(prefix + format_meter(n, total, cur_t-start_t, format_dict))
         file.write('\n')
 
 
