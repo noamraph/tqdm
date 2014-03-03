@@ -37,8 +37,11 @@ def format_meter(n, total, elapsed, format_dict):
 
         left_str = format_interval(elapsed / n * (total-n)) if n else '?'
 
-        return format_dict['str_long'] % (
-            bar, n, total, percentage, elapsed_str, left_str, rate)
+        try:
+            return format_dict['str_long'] % locals()
+        except TypeError:
+            return format_dict['str_long'] % (
+                bar, n, total, percentage, elapsed_str, left_str, rate)
 
     else:
         return format_dict['str_short'] % (n, elapsed_str, rate)
