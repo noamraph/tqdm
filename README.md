@@ -1,6 +1,11 @@
 tqdm
 ====
 
+Note
+----
+
+Please use this version https://github.com/kmike/tqdm as it contains other useful pull requests not merged by the author of the library.
+
 Instantly make your loops show a progress meter - just wrap any iterator with "tqdm(iterator)", and you're done!
 
 ![ScreenShot](https://i.imgur.com/he9Aw5C.gif)
