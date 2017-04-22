@@ -1,7 +1,9 @@
-__all__ = ['tqdm', 'trange']
+"""Source file for tqdm functionality."""
 
 import sys
 import time
+
+__all__ = ['tqdm', 'trange']
 
 
 def format_interval(t):
@@ -19,24 +21,24 @@ def format_meter(n, total, elapsed):
     # elapsed - number of seconds passed since start
     if n > total:
         total = None
-    
+
     elapsed_str = format_interval(elapsed)
     rate = '%5.2f' % (n / elapsed) if elapsed else '?'
-    
+
     if total:
         frac = float(n) / total
-        
-        N_BARS = 10
-        bar_length = int(frac*N_BARS)
-        bar = '#'*bar_length + '-'*(N_BARS-bar_length)
-        
+
+        n_bars = 10
+        bar_length = int(frac * n_bars)
+        bar = '#' * bar_length + '-' * (n_bars - bar_length)
+
         percentage = '%3d%%' % (frac * 100)
-        
-        left_str = format_interval(elapsed / n * (total-n)) if n else '?'
-        
+
+        left_str = format_interval(elapsed / n * (total - n)) if n else '?'
+
         return '|%s| %d/%d %s [elapsed: %s left: %s, %s iters/sec]' % (
             bar, n, total, percentage, elapsed_str, left_str, rate)
-    
+
     else:
         return '%d [elapsed: %s, %s iters/sec]' % (n, elapsed_str, rate)
 
@@ -45,9 +47,9 @@ class StatusPrinter(object):
     def __init__(self, file):
         self.file = file
         self.last_printed_len = 0
-    
+
     def print_status(self, s):
-        self.file.write('\r'+s+' '*max(self.last_printed_len-len(s), 0))
+        self.file.write('\r' + s + ' ' * max(self.last_printed_len - len(s), 0))
         self.file.flush()
         self.last_printed_len = len(s)
 
@@ -73,12 +75,12 @@ def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
             total = len(iterable)
         except TypeError:
             total = None
-    
-    prefix = desc+': ' if desc else ''
-    
+
+    prefix = desc + ': ' if desc else ''
+
     sp = StatusPrinter(file)
     sp.print_status(prefix + format_meter(0, total, 0))
-    
+
     start_t = last_print_t = time.time()
     last_print_n = 0
     n = 0
@@ -90,17 +92,17 @@ def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
             # We check the counter first, to reduce the overhead of time.time()
             cur_t = time.time()
             if cur_t - last_print_t >= mininterval:
-                sp.print_status(prefix + format_meter(n, total, cur_t-start_t))
+                sp.print_status(prefix + format_meter(n, total, cur_t - start_t))
                 last_print_n = n
                 last_print_t = cur_t
-    
+
     if not leave:
         sp.print_status('')
         sys.stdout.write('\r')
     else:
         if last_print_n < n:
             cur_t = time.time()
-            sp.print_status(prefix + format_meter(n, total, cur_t-start_t))
+            sp.print_status(prefix + format_meter(n, total, cur_t - start_t))
         file.write('\n')
 
 
@@ -110,5 +112,5 @@ def trange(*args, **kwargs):
         f = xrange
     except NameError:
         f = range
-    
+
     return tqdm(f(*args), **kwargs)
