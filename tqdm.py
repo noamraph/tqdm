@@ -7,6 +7,7 @@ __all__ = ['tqdm', 'trange']
 
 
 def format_interval(t):
+    """To convert time duration into a readablie format."""
     mins, s = divmod(int(t), 60)
     h, m = divmod(mins, 60)
     if h:
@@ -16,9 +17,19 @@ def format_interval(t):
 
 
 def format_meter(n, total, elapsed):
-    # n - number of finished iterations
-    # total - total number of iterations, or None
-    # elapsed - number of seconds passed since start
+    """To display progress on screen.
+
+    Args:
+        n - number of finished iterations
+        total - total number of iterations, or None
+        elapsed - number of seconds passed since start
+
+    Returns:
+        A string with detailing the progress of work or if job is completed
+        then its shows the stats for completes work. These Details include
+        time elapsed, approx time left to complete job and also number of
+        iteration processed per second.
+    """
     if n > total:
         total = None
 
@@ -54,21 +65,26 @@ class StatusPrinter(object):
         self.last_printed_len = len(s)
 
 
-def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
-         mininterval=0.5, miniters=1):
-    """
-    Get an iterable object, and return an iterator which acts exactly like the
-    iterable, but prints a progress meter and updates it every time a value is
-    requested.
-    'desc' can contain a short string, describing the progress, that is added
-    in the beginning of the line.
-    'total' can give the number of expected iterations. If not given,
-    len(iterable) is used if it is defined.
-    'file' can be a file-like object to output the progress message to.
-    If leave is False, tqdm deletes its traces from screen after it has
-    finished iterating over all elements.
-    If less than mininterval seconds or miniters iterations have passed since
-    the last progress meter update, it is not updated again.
+def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr, mininterval=0.5, miniters=1):
+    """A wrapper over user input iterator to show progress and time elapsed details.
+
+    Note: This wrapper does not change the functionality of the iterator output
+     and only displaying simple progress meter. Every time the input iterator
+     is being called, the progress meter keeps updating progress.
+
+    Args:
+        iterable: user input iterator
+        desc(optional): A short description, to display during the progress.
+                This input is shown at beginning of the line of the progress.
+        total(optional): User can give the number of expected iterations.
+                If not given, len(iterable) is used if it is defined.
+        file(optional): A file-like object to output the progress message to.
+        leave(optional): If leave is False(default), tqdm deletes its traces
+                 from screen after it has finished iterating over all elements.
+        miniters(optional): for how many iteraitons progress to be displayed.
+                If the limit is passed, no futher progress is displayed.
+        mininterval(optional): for how many seconds progress to be displayed.
+                If the limit is passed, no futher progress is displayed.
     """
     if total is None:
         try:
@@ -107,7 +123,29 @@ def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
 
 
 def trange(*args, **kwargs):
-    """A shortcut for writing tqdm(range()) on py3 or tqdm(xrange()) on py2"""
+    """A wrapper function, combining tqdm functionality on range(xrange in py2).
+
+    All the `args` provided will be given to `range` as input and
+     `kwargs` key word arguments goes to `tqdm` main function as input.
+
+    Example:
+    ---------------------------------------------------------------------------------
+    Using standard `range` function as iterator for tqdm.
+    >>> import time, tqdm
+    >>> for i in tqdm.tqdm(range(1, 100, 2), desc='tqdm & range'):
+    ...     time.sleep(0.1)
+    ...
+    tqdm & range: |######----| 30/50  60% [elapsed: 00:03 left: 00:02,  9.76 iters/sec]
+    >>>
+
+    Using tdqm.trange function directly instead of .
+
+    >>> for i in tqdm.trange(1, 100, 2, desc='trange'):
+    ...     time.sleep(0.1)
+    ...
+
+    trange: |########--| 40/50  80% [elapsed: 00:04 left: 00:01,  9.71 iters/sec]
+    """
     try:
         f = xrange
     except NameError:
