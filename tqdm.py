@@ -1,7 +1,10 @@
-__all__ = ['tqdm', 'trange']
+from __future__ import division
 
 import sys
 import time
+
+
+__all__ = ['tqdm', 'trange']
 
 
 def format_interval(t):
@@ -17,7 +20,7 @@ def format_meter(n, total, elapsed):
     # n - number of finished iterations
     # total - total number of iterations, or None
     # elapsed - number of seconds passed since start
-    if n > total:
+    if total and n > total:
         total = None
     
     elapsed_str = format_interval(elapsed)
@@ -71,7 +74,7 @@ def tqdm(iterable, desc='', total=None, leave=False, file=sys.stderr,
     if total is None:
         try:
             total = len(iterable)
-        except TypeError:
+        except (TypeError, AttributeError):
             total = None
     
     prefix = desc+': ' if desc else ''

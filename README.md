@@ -1,3 +1,8 @@
+Note
+----
+
+Please use this version https://github.com/kmike/tqdm as it contains other useful pull requests not merged by the author of the library.
+
 tqdm
 ====
 
@@ -33,3 +38,9 @@ def trange(*args, **kwargs):
     """A shortcut for writing tqdm(xrange)"""
     return tqdm(xrange(*args), **kwargs)
 ```
+
+Running tests
+-------------
+
+Please make sure tox (http://tox.testrun.org/) is installed and type
+`tox` from the command line
