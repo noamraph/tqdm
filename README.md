@@ -1,6 +1,8 @@
 tqdm
 ====
 
+### NOTICE: See Also [tqdm/tqdm](https://github.com/tqdm/tqdm)
+
 Instantly make your loops show a progress meter - just wrap any iterator with "tqdm(iterator)", and you're done!
 
 Note: an actively developed version is here: https://github.com/tqdm/tqdm
