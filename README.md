@@ -1,7 +1,9 @@
 tqdm
 ====
 
-Instantly make your loops show a progress meter - just wrap any iterator with "tqdm(iterator)", and you're done!
+[![Build Status](https://img.shields.io/travis/kmike/tqdm.svg?branch=all-fixes)](https://travis-ci.org/kmike/tqdm)
+
+Instantly make your loops show a progress meter - just wrap any iterable with "tqdm(iterable)", and you're done!
 
 Note: an actively developed version is here: https://github.com/tqdm/tqdm
 
@@ -33,3 +35,9 @@ def trange(*args, **kwargs):
     """A shortcut for writing tqdm(xrange)"""
     return tqdm(xrange(*args), **kwargs)
 ```
+
+Running tests
+-------------
+
+Please make sure tox (http://tox.testrun.org/) is installed and type
+`tox` from the command line.
