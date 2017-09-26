@@ -9,7 +9,31 @@ Note: an actively developed version is here: https://github.com/tqdm/tqdm
 
 tqdm (read ta<i>qa</i>dum, تقدّم) means "progress" in arabic.
 
-You can also use trange(N) as a shortcut for tqdm(xrange(N))
+As of now, `tqdm` module provides two simple iterator functions
+
+* `tqdm`: A wrapper over user provided wrapper function
+* `trange`: A wrapper over python's standard range function()
+
+Example:
+
+```python
+from tqdm import tqdm, trange
+from time import sleep
+
+# simple example of see how tqdm display works
+for i in tqdm(range(100), desc='example1'):
+    sleep(0.1)
+    if i // 10 == 0:
+        print(i)
+
+# using tqdm's wrapper for range.
+for i in trange(100, desc='example2'):
+    sleep(0.1)
+    if i // 10 == 0:
+        print(i)
+print('Example: Started,....completed!')
+
+```
 
 Here's the doc:
 
@@ -33,3 +57,4 @@ def trange(*args, **kwargs):
     """A shortcut for writing tqdm(xrange)"""
     return tqdm(xrange(*args), **kwargs)
 ```
+
